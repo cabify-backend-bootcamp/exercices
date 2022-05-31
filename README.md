@@ -28,7 +28,7 @@ If you want to break each exercise into multiple parts it is still okay.
 1. `git checkout master`
 1. `git pull`
 1. `git checkout -b name.lastname/describe-what-you-are-doing`
-1.  make as many as commits you feel it is okay, but remember commits can tell a story. In the future if someone will maintain your project they probably are will at some point will need the commit messages to understand what happened. 
+1.  make as many as commits you feel it is okay, but remember commits can tell a story. In the future when someone will maintain your project at some point they will check the commit messages to understand why a changed was introduced. 
 1. ???
 1. profit
 1. `git push --set-upstream origin name.lastname/describe-what-you-are-doing`
