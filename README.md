@@ -7,7 +7,7 @@ As you already know this is going to be a project that we are going to be buildi
 ### Create a new repo
 
 These are the step to create a new repo.
-1. Create a new repo in github or gitlab what ever you prefer.
+1. Create a new repo in github or gitlab what ever you prefer. (NOTE: Do not initialize the repo on github/gitlab)
 1. Create a new folder in our computer.
 1. Inside create a new empty file README.md
 1. `git init`
