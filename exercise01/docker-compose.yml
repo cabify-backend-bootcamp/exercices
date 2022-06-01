@@ -1,18 +1,21 @@
 ---
 version: '3'
 services:
-  exercise01:
-    image: "exercise01"
-    expose:
-      - "9001"
-    ports:
-      - "9001:9001"
   messageapp:
-    depends_on:
-      - exercise01
     image: "cabify/backend-bootcamp-messageapp:latest"
     expose:
       - "3000"
     ports:
       - "3000:3000"
+  
+  exercise01:
+    depends_on:
+      - messageapp
+    image: "exercise01"
+    expose:
+      - "9001"
+    ports:
+      - "9001:9001"
+    links:
+      - "messageapp:messageDB"
 
