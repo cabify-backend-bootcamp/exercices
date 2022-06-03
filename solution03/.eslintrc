@@ -1,0 +1,35 @@
+{
+  "extends": ["@cabify/eslint-config/recommended"],
+  "rules": {
+    // Additional, per-project rules...
+    "import/extensions": ["error", "always", { "ignorePackages": true }],
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ]
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "paths": ["."]
+      },
+      "jest": {
+        "jestConfigFile": "./jest.config.js"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "files": ["src/**/*.spec.*"],
+      "settings": {
+        "import/resolver": {
+          "jest": {
+            "jestConfigFile": "./jest.config.js"
+          }
+        }
+      }
+    }
+  ]
+}
