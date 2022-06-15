@@ -1,6 +1,7 @@
 const database = require("../database");
 const CreditModel = require("../models/credit");
 const { cleanClone } = require("../utils");
+const logger = require("loglevel");
 
 function newCredit(creditModel, conditions, newValue) {
   return creditModel.findOneAndUpdate(conditions, newValue, {
@@ -23,14 +24,14 @@ function newCreditTransaction(conditions, newValue) {
     })
     .then(() => {
       return newCredit(CreditPrimary, conditions, newValue).then(doc => {
-        console.log("Credit updated successfully", doc);
+        logger.info("Credit updated successfully", doc);
         return doc;
       });
     })
     .then(cleanClone)
     .then(replica => {
       return newCredit(CreditReplica, conditions, replica).then(doc => {
-        console.log("Credit replicated successfully", doc);
+        logger.info("Credit replicated successfully", doc);
         return doc;
       });
     })
@@ -41,7 +42,7 @@ function newCreditTransaction(conditions, newValue) {
       return doc;
     })
     .catch(err => {
-      console.log("Error saving credit transaction:", err);
+      logger.info("Error saving credit transaction:", err);
       if (oldValue) {
         oldValue.markModified("amount");
         oldValue.save().then(() => {
@@ -63,7 +64,7 @@ module.exports = function(conditions, newValue, cb) {
   } else {
     newCredit(Credit(), conditions, newValue)
       .then(doc => {
-        console.log("Credit updated successfully", doc);
+        logger.info("Credit updated successfully", doc);
         cb(doc);
       })
       .catch(err => {

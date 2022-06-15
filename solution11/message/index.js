@@ -1,4 +1,6 @@
 const express = require("express");
+const logger = require("loglevel");
+logger.setLevel("info")
 
 const bodyParser = require("body-parser");
 const {
@@ -48,7 +50,7 @@ app.get("/messages", getMessages);
 app.get("/message/:messageId/status", getMessageStatus);
 
 app.use(function(err, req, res, next) {
-  console.log(res.body);
+  logger.info(res.body);
   if (err instanceof ValidationError) {
     res.sendStatus(400);
   } else {
@@ -57,5 +59,5 @@ app.use(function(err, req, res, next) {
 });
 
 app.listen(9010, function() {
-  console.log("App started on PORT 9010");
+  logger.info("App started on PORT 9010");
 });

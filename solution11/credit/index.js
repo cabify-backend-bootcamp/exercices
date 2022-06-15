@@ -1,4 +1,7 @@
 const express = require("express");
+const logger = require("loglevel");
+
+logger.setLevel("info");
 
 const bodyParser = require("body-parser");
 const {
@@ -33,10 +36,12 @@ app.post(
 );
 
 app.use(function(err, req, res, next) {
-  console.log(res.body);
+  logger.info(res.body);
   if (err instanceof ValidationError) {
+    logger.err("Invalid request: " + res.body + " error: " + err);
     res.sendStatus(400);
   } else {
+    logger.err("Unhandled internal server error: " + err);
     res.sendStatus(500);
   }
 });
@@ -44,5 +49,5 @@ app.use(function(err, req, res, next) {
 receiveMessage()
 
 app.listen(9020, function() {
-  console.log("App started on PORT 9020");
+  logger.info("App started on PORT 9020");
 });

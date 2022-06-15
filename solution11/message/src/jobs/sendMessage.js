@@ -1,5 +1,6 @@
 const http = require("http");
 const uuid = require("uuid/v1");
+const logger = require("loglevel");
 
 const send_queue = require("../queues/pub");
 const receive_queue = require("../queues/sub");
@@ -26,27 +27,26 @@ function sendMessage(messageData, success, failed) {
 
   let postReq = http.request(postOptions);
 
-  console.log("Processing job");
-  console.log(messageData);
+  logger.info("Processing job with data: ", messageData);
 
   postReq.on("response", postRes => {
     if (postRes.statusCode === 200) {
       saveMessage(Object.assign(messageData, { status: "OK" }), success);
     } else {
-      console.error("Error while sending message");
+      logger.error("Error while sending message", err);
       saveMessage(Object.assign(messageData, { status: "ERROR" }), failed);
     }
   });
 
   postReq.on("timeout", () => {
-    console.error("Timeout Exceeded!");
+    logger.error("Timeout Exceeded!", err);
     postReq.abort();
 
     saveMessage(Object.assign(messageData, { status: "TIMEOUT" }), failed);
   });
 
   postReq.on("error", () => {
-    console.error("Connection error!");
+    logger.error("Connection error!", err);
     failed();
   });
 
@@ -55,7 +55,7 @@ function sendMessage(messageData, success, failed) {
 }
 
 function fallback(messageData, done) {
-  console.error("Unable to attempt to send message: circuit open");
+  logger.error("Unable to attempt to send message: circuit open");
   saveMessage(Object.assign(messageData, { status: "ERROR" }), done);
 }
 
@@ -67,7 +67,7 @@ receive_queue.process(function(job, done) {
       () => fallback(messageData, done)
     );
   } else {
-    console.log("Credito insuficiente");
+    logger.error("Credito insuficiente");
     const messageData = Object.assign({}, job.data);
     saveMessage(Object.assign(messageData, { status: "ERROR" }), done);
   }
@@ -118,7 +118,7 @@ module.exports = function addJob(jobParams) {
       return messageId;
     })
     .catch((error) => {
-      console.log(error)
+      logger.error(error)
       return error
     });
 }

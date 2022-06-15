@@ -2,6 +2,7 @@ const receive_queue = require("../queues/sub");
 const send_queue = require("../queues/pub");
 const updateCredit = require("../clients/updateCredit");
 const getCredit = require("../clients/getCredit");
+const logger = require("loglevel");
 
 function processingMessage(messageParams) {
   return new Promise((ok, ko) => {
@@ -35,14 +36,14 @@ module.exports = function() {
           send_queue.add(Object.assign(messageData, { status: "ERROR" }));
           done()
         } else {
-          console.error("Credito suficiente")
+          logger.error("Credito suficiente")
           return processingMessage(messageData)
         }
       })
       .then(() => {
         done()
       }).catch((error) => {
-        console.log(error)
+        logger.error(error)
         done(error)
       });
   });

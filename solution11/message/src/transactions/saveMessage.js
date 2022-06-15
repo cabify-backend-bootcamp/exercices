@@ -1,6 +1,6 @@
-const database = require("../database");
 const Message = require("../models/message");
 const { unversionedClone } = require("../utils");
+const logger = require("loglevel");
 
 function saveMessage(model, newValue) {
   return model.findOneAndUpdate(
@@ -19,12 +19,12 @@ function saveMessageReplica(replica, retries) {
   if (retries > 0) {
     return saveMessage(Message("replica"), replica)
       .then(doc => {
-        console.log("Message replicated successfully", doc);
+        logger.info("Message replicated successfully", doc);
         return doc;
       })
       .catch(err => {
-        console.log("Error while saving message replica", err);
-        console.log("Retrying...");
+        logger.error("Error while saving message replica", err);
+        logger.error("Retrying...");
         return saveMessageReplica(replica, retries - 1);
       });
   }
@@ -33,7 +33,7 @@ function saveMessageReplica(replica, retries) {
 function saveMessageTransaction(newValue) {
   return saveMessage(Message(), newValue)
     .then(doc => {
-      console.log("Message saved successfully:", doc);
+      logger.info("Message saved successfully:", doc);
       return unversionedClone(doc);
     })
     .then(clone => {
@@ -41,7 +41,7 @@ function saveMessageTransaction(newValue) {
       return clone;
     })
     .catch(err => {
-      console.log("Error while saving message", err);
+      logger.error("Error while saving message", err);
       throw err;
     });
 }

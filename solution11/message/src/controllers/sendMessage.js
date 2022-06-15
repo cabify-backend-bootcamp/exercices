@@ -1,5 +1,5 @@
 const sendMessage = require("../jobs/sendMessage");
-
+const logger = require("loglevel");
 module.exports = function(req, res) {
   sendMessage(req.body)
     .then(messageId => {
@@ -11,7 +11,7 @@ module.exports = function(req, res) {
       res.end(JSON.stringify(response));
     })
     .catch(error => {
-      console.error(error);
+      logger.error(error);
       res.statusCode = 500;
       res.end(JSON.stringify(error));
     });

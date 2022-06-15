@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
 const database = require("../database");
 const Credit = require("../models/credit");
 const { cleanClone } = require("../utils");
+const logger = require("loglevel");
 
 function updateCredit(creditModel, conditions, messageData) {
   return creditModel.findOneAndUpdate(
@@ -46,15 +46,15 @@ function updateCreditTransaction(conditions, messageData) {
     })
     .then(() => {
       return updateCredit(CreditPrimary, conditions, messageData).then(doc => {
-        console.log("Credit updated successfully", doc);
+        logger.info("Credit updated successfully", doc);
         return doc;
       });
     })
     .then(cleanClone)
     .then(replica => {
-      console.log(replica)
+      logger.info(replica)
       return replicateCredit(CreditReplica, conditions, replica).then(doc => {
-        console.log("Credit replicated successfully", doc);
+        logger.info("Credit replicated successfully", doc);
         return doc;
       });
     })
@@ -65,7 +65,7 @@ function updateCreditTransaction(conditions, messageData) {
       return doc;
     })
     .catch(err => {
-      console.log("Error updating credit transaction:", err);
+      logger.error("Error updating credit transaction:", err);
       if (oldValue) {
         oldValue.markModified("amount");
         oldValue.save().then(() => {
@@ -81,7 +81,7 @@ module.exports = function(conditions, messageData, cb) {
   if (database.isReplicaOn()) {
     updateCreditTransaction(conditions, messageData)
       .then(doc => {
-        console.log("Credit trans. updated successfully", doc);
+        logger.info("Credit trans. updated successfully", doc);
         cb(doc)
       })
       .catch(err => {
@@ -90,7 +90,7 @@ module.exports = function(conditions, messageData, cb) {
   } else {
     updateCredit(Credit(), conditions, messageData)
       .then(doc => {
-        console.log("Credit updated successfully", doc);
+        logger.info("Credit updated successfully", doc);
         cb(doc);
       })
       .catch(err => {
