@@ -1,0 +1,9 @@
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+
+    static_configs:
+      - targets: [
+        'credit:9020',
+        'message:9010'
+      ]
