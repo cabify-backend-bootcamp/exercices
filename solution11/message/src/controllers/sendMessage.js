@@ -1,4 +1,5 @@
 const sendMessage = require("../jobs/sendMessage");
+const counterMethodIncrement = require('../metrics');
 const logger = require("loglevel");
 module.exports = function(req, res) {
   sendMessage(req.body)
@@ -9,6 +10,7 @@ module.exports = function(req, res) {
 
       res.statusCode = 200;
       res.end(JSON.stringify(response));
+      counterMethodIncrement("send_message")
     })
     .catch(error => {
       logger.error(error);
